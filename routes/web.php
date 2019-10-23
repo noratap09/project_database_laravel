@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +14,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/project/login/','database_project_controller@login');
+
+Route::get('/project/products/{productCode}','database_project_controller@products_details');
+
+Route::get('/project/employees/{employeeNumber}','database_project_controller@employees_details');
+
 Route::get('/project/products/fillter/{colum}/{fillter}','database_project_controller@products_fillter');
 
 Route::resource('/project','database_project_controller');
+

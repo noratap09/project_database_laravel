@@ -10,6 +10,15 @@ use App\orders;
 
 class database_project_controller extends Controller
 {
+	public function login_ck()
+	{
+		return view("login");
+	}
+	
+	public function login()
+	{
+		return view("login");
+	}
     /**
      * Display a listing of the resource.
      *
@@ -52,29 +61,28 @@ class database_project_controller extends Controller
 		if($id=="products")
 		{
 			$colum = ["productCode","productName","buyPrice","quantityInStock","productVendor"];
-			$data = products::all($colum);
+			$data = products::paginate(25);
 		}
 		else if($id=="orders")
 		{
 			$colum = ["orderNumber","customerNumber","orderDate","comments","status"];
-			$data = orders::all($colum);
+			$data = orders::paginate(20);
 		}
 		else if($id=="customers")
 		{
 			$colum = ["customerNumber","customerName","phone","salesRepEmployeeNumber","creditLimit"];
-			$data = customers::all($colum);
+			$data = customers::paginate(25);
 		}
 		else if($id=="employees")
 		{
 			$colum = ["employeeNumber","firstName","lastName","officeCode","jobTitle"];
-			$data = employees::all($colum);
+			$data = employees::paginate(25);
 		}
 		else
 		{
 			abort(404);
 		}
-		
-        return view("1",["data"=>$data,"colum"=>$colum]);
+        return view("main",["data"=>$data,"colum"=>$colum,"category"=>$id]);
     }
 
     /**
@@ -116,15 +124,28 @@ class database_project_controller extends Controller
 		if($colum == "productVendor")
 		{
 			$colum = ["productCode","productName","buyPrice","quantityInStock","productVendor"];
-			$data = products::where('productVendor', '=', $fillter)->get($colum);
+			$data = products::where('productVendor', '=', $fillter)->paginate(25);
 		}
 		else if($colum == "productScale")
 		{
 			$colum = ["productCode","productName","buyPrice","quantityInStock","productVendor"];
-			$data = products::where('productScale', '=', $fillter)->get($colum);
+			$data = products::where('productScale', '=', $fillter)->paginate(25);
 		}
-        return view("1",["data"=>$data,"colum"=>$colum]);
+        return view("main",["data"=>$data,"colum"=>$colum,"category"=>"products"]);
     }
+	
+	public function products_details($productCode)
+	{
+		$data = products::where('productCode', '=', $productCode)->first();
+		return view("product_detail",["data"=>$data]);
+	}
+	
+	public function employees_details($employeeNumber)
+	{
+		$data_em = employees::where("employeeNumber",'=',$employeeNumber)->first();
+		$data_off = employees::where("employeeNumber",'=',$employeeNumber)->first()->offices; 
+		return view("employees_detail",["data_em"=>$data_em,"data_off"=>$data_off]);
+	}
 	
 	public static function display_catelog()
 	{	
@@ -147,5 +168,5 @@ class database_project_controller extends Controller
 		}
 				
 		echo "</ul>";
-	}
+	}	
 }
